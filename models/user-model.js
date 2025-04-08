@@ -1,6 +1,6 @@
 const fs = require("fs");
 
-const dataSource = "resources/user-data.txt";
+const dataSource = "resources/data/user-data.txt";
 const dataEncoder = "utf-8";
 
 exports.getAllUsers = () => {
