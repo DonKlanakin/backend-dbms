@@ -6,7 +6,10 @@ const pool = new Pool({
     database: ENV.PROD.DB,
     port: ENV.PROD.PORT,
     user: ENV.PROD.USER,
-    password: ENV.PROD.PASSWORD
+    password: ENV.PROD.PASSWORD,
+    ssl: {
+        rejectUnauthorized: ENV.PROD.SSL_REQUIRED
+    }
 });
 
 module.exports = pool;

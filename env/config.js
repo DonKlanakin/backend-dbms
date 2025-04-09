@@ -9,11 +9,12 @@ const ENV = {
     },
     PROD: {
         ROOT: process.env.PROD_APP_ROOT,
-        PORT: process.env.PROD_APP_PORT,
+        PORT: process.env.PROD_PGPORT,
         HOST: process.env.PROD_PGHOST,
         DB: process.env.PROD_PGDATABASE,
         USER: process.env.PROD_PGUSER,
-        PASSWORD: process.env.PROD_PGPASSWORD
+        PASSWORD: process.env.PROD_PGPASSWORD,
+        SSL_REQUIRED: process.env.PROD_SSL_REQUIRED
     }
 };
 
