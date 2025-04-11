@@ -1,8 +1,12 @@
-const userRepository = require("../repository/user-repository");
+const userModel = require("../models/user-model");
 
-exports.getAllUsers = async () => {
-    const users = await userRepository.getAllUsers();
-    // Process data
-
-    return users;
-}
+exports.createUsers = async (users) => {
+    // Validate fields
+    for (let user of users) {
+      if (!user.name || !user.email || !user.age) {
+        throw new Error('Missing required user fields');
+      }
+    }
+  
+    await userModel.createUsers(users);
+};

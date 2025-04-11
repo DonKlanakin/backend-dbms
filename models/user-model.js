@@ -1,8 +1,6 @@
-const fs = require("fs");
+const userRepository = require("../repository/user-repository");
 
-const dataSource = "resources/data/user-data.txt";
-const dataEncoder = "utf-8";
-
-exports.getAllUsers = () => {
-    return fs.readFileSync(dataSource, dataEncoder);
-}
+exports.createUsers = async (users) => userRepository.createUsers(users);
+// exports.getAllUsers = async (req, res) => userRepository.getAllUsers();
+// exports.getUserById = async (req, res) => userRepository.getUserById();
+// exports.updateUserById = async (req, res) => userRepository.updateUserById();
