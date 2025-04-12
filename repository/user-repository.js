@@ -11,20 +11,40 @@ exports.createUsers = async (users) => {
     await pool.query(sqlInstructions);
 };
 
-exports.getAllUsers = async () => {
+exports.getAllUsers = async (filters = {}) => {
     let result = {};
-    let sqlInstructions = `
-        SELECT * FROM users ORDER BY id ASC
-    `;
+    let sqlInstructions = `SELECT * FROM users`;
+    let values = [];
+    let conditions = [];
+    if (filters.age) {
+        values.push(filters.age);
+        conditions.push(`age = $${values.length}`);
+    }
+
+    if (filters.name) {
+        values.push(`%${filters.name}%`);
+        conditions.push(`LOWER(name) LIKE LOWER($${values.length})`);
+    }
+    
+    if (filters.email) {
+        values.push(`%${filters.email}%`);
+        conditions.push(`LOWER(email) LIKE LOWER($${values.length})`);
+    }
+
+    if (conditions.length > 0) {
+        sqlInstructions += ` WHERE ` + conditions.join(' AND ');
+    }
+
+    sqlInstructions += ` ORDER BY id ASC`;
 
     try {
-        result = await pool.query(sqlInstructions);
+        result = await pool.query(sqlInstructions, values);
         result = result.rows;
     } catch (err) {
-        result = { 
-            error: err.message
+        result = {
+            error: err.toString()
         };
-    };
+    }
 
     return result;
 };
@@ -39,7 +59,7 @@ exports.getUserById = async (req, res) => {
         result = await pool.query(sqlInstructions, [req.params.id]);
     } catch (err) {
         result = {
-            error: err.message
+            error: err.toString()
         };
     };
 
@@ -63,9 +83,27 @@ exports.updateUserById = async (id, user) => {
     } catch (err) {
         result = {
             stackTrace: "updateUserById",
-            error: err.message
+            error: err.toString()
         };
     };
+
+    return result;
+};
+
+exports.deleteUserById = async (req, res) => {
+    let result = {};
+    let sqlInstructions = `
+        DELETE FROM users WHERE id = $1 RETURNING *
+    `;
+
+    try {
+        result = await pool.query(sqlInstructions, [req.params.id]);
+    } catch (err) {
+        result = {
+            stackTrace: "user-repository :: deleteUserById",
+            error: err.toString()
+        };
+    }
 
     return result;
 };

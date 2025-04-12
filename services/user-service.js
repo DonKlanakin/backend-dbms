@@ -11,7 +11,7 @@ exports.createUsers = async (users) => {
     await userModel.createUsers(users);
 };
 
-exports.getAllUsers = async () => await userModel.getAllUsers();
+exports.getAllUsers = async (filters) => await userModel.getAllUsers(filters);
 exports.getUserById = async (req, res) => userModel.getUserById(req, res);
 
 exports.updateUserById = async (id, user) => {
@@ -24,3 +24,5 @@ exports.updateUserById = async (id, user) => {
     const result = await userModel.updateUserById(id, user);
     return result;
 };
+
+exports.deleteUserById = async (req, res) => userModel.deleteUserById(req, res);
