@@ -16,6 +16,7 @@ exports.getAllUsers = async (filters = {}) => {
     let sqlInstructions = `SELECT * FROM users`;
     let values = [];
     let conditions = [];
+    
     if (filters.age) {
         values.push(filters.age);
         conditions.push(`age = $${values.length}`);
