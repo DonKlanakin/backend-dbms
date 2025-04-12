@@ -12,3 +12,15 @@ exports.createUsers = async (users) => {
 };
 
 exports.getAllUsers = async () => await userModel.getAllUsers();
+exports.getUserById = async (req, res) => userModel.getUserById(req, res);
+
+exports.updateUserById = async (id, user) => {
+    // Validate fields
+    const { name, email, age } = user;
+    if (!name || !email || !age) {
+        throw new Error("Missing required user fields");
+    }
+
+    const result = await userModel.updateUserById(id, user);
+    return result;
+};

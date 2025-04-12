@@ -19,9 +19,45 @@ exports.getAllUsers = async () => {
         result = result.rows;
     } catch (err) {
         result = { 
-            error: err.message 
+            error: err.message
         };
-    }
+    };
 
     return result;
 };
+
+exports.getUserById = async (req, res) => {
+    let result = {};
+    try {
+        result = await pool.query(`
+            SELECT * FROM users WHERE id = $1
+        `, [req.params.id]);
+    } catch (err) {
+        result = {
+            error: err.message
+        };
+    };
+
+    return result;
+};
+
+exports.updateUserById = async (id, user) => {
+    let result = {};
+    try {
+        const { name, email, age } = user;
+        result = await pool.query(`
+            UPDATE users
+            SET name = $1,
+                email = $2,
+                age = $3
+            WHERE id = $4
+            RETURNING *
+        `, [name, email, age, id]);
+    } catch (err) {
+        result = {
+            error: err.message
+        };
+    };
+
+    return result;
+}
