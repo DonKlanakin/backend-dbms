@@ -43,21 +43,23 @@ exports.getUserById = async (req, res) => {
 
 exports.updateUserById = async (id, user) => {
     let result = {};
-    try {
-        const { name, email, age } = user;
-        result = await pool.query(`
+    let sqlInstuctions = `
             UPDATE users
             SET name = $1,
                 email = $2,
                 age = $3
             WHERE id = $4
             RETURNING *
-        `, [name, email, age, id]);
+        `
+    try {
+        const { name, email, age } = user;
+        result = await pool.query(sqlInstuctions, [name, email, age, id]);
     } catch (err) {
         result = {
+            stackTrace: "updateUserById",
             error: err.message
         };
     };
 
     return result;
-}
+};

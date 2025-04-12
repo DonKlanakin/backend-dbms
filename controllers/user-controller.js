@@ -35,21 +35,27 @@ exports.getUseById = async (req, res) => {
 
 exports.updateUserById = async (req, res) => {
     const user = req.body;
-    if (!user || typeof user !== 'object') {
-        return res.status(400).json({ message: "Expected a user object." });
-    }
-
+    const userId = req.params.id;
     try {
-        const updatedUser = await userService.updateUserById(user.id, user);
-        let userId = updatedUser.rows[0].id;
-        res.status(200).json([
-            {
-                message: `[User ID:${userId}]'s has been updated.`,
-                updated: updatedUser.rows[0]
-            }
-        ]);
+        if (!user || typeof user !== 'object') {
+            return res.status(400).json({
+                message: "Expected a user object."
+            });
+        } else if (user.id != userId) {
+            return res.status(400).json({
+                message: "Params and Body ids mismatached."
+            });
+        };
+        const updatedUser = await userService.updateUserById(userId, user);
+        res.status(200).json([{
+            status: "SUCCESS",
+            message: `[User ID:${userId}]'s has been updated.`,
+            updated: updatedUser.rows[0]
+        }]);
     } catch (err) {
-        console.log(err);
-        res.status(500).json({ error: err.message });
+        res.status(500).json({
+            stackTrace: "user-controller :: updateUserById",
+            error: err.message
+        });
     };
 };
