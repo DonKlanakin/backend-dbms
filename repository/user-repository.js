@@ -1,14 +1,17 @@
 const pool = require("../db/pool");
 
 exports.createUsers = async (users) => {
-    let values = users.map(({ id, name, email, age }) =>
-        `('${id}', '${name}', '${email}', ${age})`).join(',');
-    
-    let sqlInstructions = `
-        INSERT INTO users (id, name, email, age) VALUES ${values}
+    const sqlInstructions = `
+        INSERT INTO users (id, name, email, age)
+        VALUES ${
+            users.map((_, i) => `
+                ($${i * 4 + 1}, $${i * 4 + 2}, $${i * 4 + 3}, $${i * 4 + 4})
+            `).join(', ')
+        };
     `;
-
-    await pool.query(sqlInstructions);
+  
+    const values = users.flatMap(({ id, name, email, age }) => [id, name, email, age]);
+    await pool.query(sqlInstructions, values);
 };
 
 exports.getAllUsers = async (filters = {}) => {

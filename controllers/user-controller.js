@@ -11,7 +11,8 @@ exports.createUsers = async (req, res) => {
     try {
         await userService.createUsers(users);
         res.status(201).json({
-            message: `${users.length} users added.`
+            message: `${users.length} users added.`,
+            inserted: users.map(u => u.email)
         });
     } catch (err) {
         res.status(500).json({
@@ -25,7 +26,7 @@ exports.getAllUsers = async (req, res) => {
     let { ...filters } = req.query;
     filters.page = parseInt(filters.page) || 1;
     filters.limit = parseInt(filters.limit) || 10;
-    // console.log(filters);
+
     try {
         const users = await userService.getAllUsers(filters);
         if (users.length > 0) {
