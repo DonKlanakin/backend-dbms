@@ -1,28 +1,27 @@
 const userModel = require("../models/user-model");
+const validateUserFields = require("../utils/userValidator");
 
 exports.createUsers = async (users) => {
-    // Validate fields
-    for (let user of users) {
-      if (!user.name || !user.email || !user.age) {
-        throw new Error("Missing required user fields");
-      }
-    }
-  
-    await userModel.createUsers(users);
+  const validatedUsers = [];
+  for (const user of users) {
+    const validated = await validateUserFields(user, {
+      checkEmailUnique: true,
+    });
+    validatedUsers.push(validated);
+  }
+  await userModel.createUsers(validatedUsers);
 };
 
 exports.getAllUsers = async (filters) => await userModel.getAllUsers(filters);
 exports.getUserById = async (req, res) => userModel.getUserById(req, res);
 
 exports.updateUserById = async (id, user) => {
-    // Validate fields
-    const { name, email, age } = user;
-    if (!name || !email || !age) {
-        throw new Error("Missing required user fields");
-    }
-
-    const result = await userModel.updateUserById(id, user);
-    return result;
+  const validated = await validateUserFields(user, {
+    checkEmailUnique: true,
+    excludeId: id,
+  });
+  const result = await userModel.updateUserById(id, validated);
+  return result;
 };
 
 exports.deleteUserById = async (req, res) => userModel.deleteUserById(req, res);
