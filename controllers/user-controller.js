@@ -22,9 +22,11 @@ exports.createUsers = async (req, res) => {
 };
 
 exports.getAllUsers = async (req, res) => {
-    const filters = req.query;
+    let { ...filters } = req.query;
+    filters.page = parseInt(filters.page) || 1;
+    filters.limit = parseInt(filters.limit) || 10;
+    console.log(filters);
     try {
-        console.log(filters);
         const users = await userService.getAllUsers(filters);
         if (users.length > 0) {
             res.status(200).json(users);

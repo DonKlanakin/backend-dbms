@@ -16,7 +16,7 @@ exports.getAllUsers = async (filters = {}) => {
     let sqlInstructions = `SELECT * FROM users`;
     let values = [];
     let conditions = [];
-    
+
     if (filters.age) {
         values.push(filters.age);
         conditions.push(`age = $${values.length}`);
@@ -36,7 +36,10 @@ exports.getAllUsers = async (filters = {}) => {
         sqlInstructions += ` WHERE ` + conditions.join(' AND ');
     }
 
-    sqlInstructions += ` ORDER BY id ASC`;
+    const offset = (filters.page - 1) * filters.limit;
+    values.push(filters.limit);
+    values.push(offset);
+    sqlInstructions += ` LIMIT $${values.length - 1} OFFSET $${values.length}`;
 
     try {
         result = await pool.query(sqlInstructions, values);
