@@ -25,7 +25,7 @@ exports.getAllUsers = async (req, res) => {
     let { ...filters } = req.query;
     filters.page = parseInt(filters.page) || 1;
     filters.limit = parseInt(filters.limit) || 10;
-    console.log(filters);
+    // console.log(filters);
     try {
         const users = await userService.getAllUsers(filters);
         if (users.length > 0) {

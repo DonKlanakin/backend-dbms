@@ -16,36 +16,55 @@ exports.getAllUsers = async (filters = {}) => {
     let sqlInstructions = `SELECT * FROM users`;
     let values = [];
     let conditions = [];
-
+ 
     if (filters.age) {
         values.push(filters.age);
         conditions.push(`age = $${values.length}`);
     }
-
-    if (filters.name) {
-        values.push(`%${filters.name}%`);
-        conditions.push(`LOWER(name) LIKE LOWER($${values.length})`);
-    }
     
     if (filters.email) {
-        values.push(`%${filters.email}%`);
-        conditions.push(`LOWER(email) LIKE LOWER($${values.length})`);
+        values.push(`%${filters.email.toLowerCase()}%`);
+        conditions.push(`LOWER(email) LIKE $${values.length}`);
+    }
+
+    if (filters.name) {
+        values.push(`%${filters.name.toLowerCase()}%`);
+        conditions.push(`LOWER(name) LIKE $${values.length}`);
+    }
+
+    const permittedSortFields = [
+        "age", "email", "id", "limit",
+        "name", "order", "page", "sort_by"
+    ];
+    const permittedSortOrders = [
+        "asc", "desc"
+    ];
+
+    if (filters.sort_by && permittedSortFields.includes(filters.sort_by)) {
+        sqlInstructions += ` ORDER BY ${filters.sort_by}`;
+    }
+
+    if (filters.order && permittedSortOrders.includes(filters.order)) {
+        sqlInstructions += ` ${filters.order.toUpperCase()}`;
     }
 
     if (conditions.length > 0) {
         sqlInstructions += ` WHERE ` + conditions.join(' AND ');
     }
 
-    const offset = (filters.page - 1) * filters.limit;
-    values.push(filters.limit);
-    values.push(offset);
-    sqlInstructions += ` LIMIT $${values.length - 1} OFFSET $${values.length}`;
+    if ((filters.page > 0) && (filters.limit > 0)) {
+        const offset = (filters.page - 1) * filters.limit;
+        values.push(filters.limit);
+        values.push(offset);
+        sqlInstructions += ` LIMIT $${values.length - 1} OFFSET $${values.length}`;
+    }
 
     try {
         result = await pool.query(sqlInstructions, values);
         result = result.rows;
     } catch (err) {
         result = {
+            stackTrace: "user-repository :: getAllUsers",
             error: err.toString()
         };
     }
@@ -63,6 +82,7 @@ exports.getUserById = async (req, res) => {
         result = await pool.query(sqlInstructions, [req.params.id]);
     } catch (err) {
         result = {
+            stackTrace: "user-repository :: getUserById",
             error: err.toString()
         };
     };
@@ -86,7 +106,7 @@ exports.updateUserById = async (id, user) => {
         result = await pool.query(sqlInstuctions, [name, email, age, id]);
     } catch (err) {
         result = {
-            stackTrace: "updateUserById",
+            stackTrace: "user-repository :: updateUserById",
             error: err.toString()
         };
     };
