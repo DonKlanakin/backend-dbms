@@ -1,5 +1,5 @@
 const userModel = require("../models/user-model");
-const validateUserFields = require("../utils/userValidator");
+const validateUserFields = require("../utils/user-validator");
 
 exports.createUsers = async (users) => {
   const validatedUsers = [];
