@@ -1,11 +1,14 @@
 const express = require("express");
 const ENV = require("./env/config");
 const userRoutes = require("./routes/user-routes");
-const pool = require("./db/pool");
+const defaultRoutes = require("./routes/default-routes");
+const errorManager = require("./utils/errors-manager");
 
 const app = express();
 app.use(express.json());
-app.use('/users', userRoutes);
+app.use("/users", userRoutes);
+app.all(/./, defaultRoutes);
+app.use(errorManager.defaultHandler);
 
 app.listen(ENV.DEV.PORT, async () => {
     console.log(`Server running on ${ ENV.PROD.ROOT }:${ ENV.DEV.PORT }`);
