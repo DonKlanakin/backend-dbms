@@ -100,7 +100,7 @@ exports.updateUserById = async (req, res, next) => {
             message: `[User ID:${userId}] has been updated.`,
             updated: updatedUser.rows[0]
         }]);
-        
+
     } catch (err) {
         console.debug(err.message);
         let remarks = {
@@ -111,7 +111,7 @@ exports.updateUserById = async (req, res, next) => {
     };
 };
 
-exports.deleteUserById = async (req, res) => {
+exports.deleteUserById = async (req, res, next) => {
     try {
         const result = await userService.deleteUserById(req, res);
         if (result.rows.length > 0) {
@@ -120,12 +120,20 @@ exports.deleteUserById = async (req, res) => {
                 message: `[User ID:${req.params.id}] has been deleted.`
             }]);
         } else {
-            res.status(404).json({ error: "User ID not found."});
+            let remarks = {
+                error: "User ID not found.",
+                change: "Nothing was deleted."
+            }
+            errorManager.processErrorMapping(req, res, next, 404, remarks);
+            return;
         };
+        
     } catch (err) {
-        res.status(500).json({
-            stackTrace: "user-controller :: deleteUserById",
-            error: err.toString()
-        });
+        console.debug(err.message);
+        let remarks = {
+            error: "An error occurred in [user-controller].deleteUserById.",
+            change: "Nothing was deleted."
+        }
+        errorManager.processErrorMapping(req, res, next, 500, remarks);
     };
 };
