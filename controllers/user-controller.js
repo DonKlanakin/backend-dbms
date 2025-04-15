@@ -28,7 +28,7 @@ exports.createUsers = async (req, res, next) => {
     };
 };
 
-exports.getAllUsers = async (req, res) => {
+exports.getAllUsers = async (req, res, next) => {
     let { ...filters } = req.query;
     filters.page = parseInt(filters.page) || 1;
     filters.limit = parseInt(filters.limit) || 10;
@@ -38,15 +38,20 @@ exports.getAllUsers = async (req, res) => {
         if (users.length > 0) {
             res.status(200).json(users);
         } else {
-            res.status(404).json({
-                message: "No users found with the given filters." 
-            });
+            let remarks = {
+                error: "No users found with the given filters.",
+                change: "No changes were made."
+            }
+            errorManager.processErrorMapping(req, res, next, 404, remarks);
+            return;
         };
     } catch (err) {
-        res.status(500).json({
-            stackTrace: "user-controller :: getAllUsers",
-            error: err.toString()
-        });
+        console.debug(err.message);
+        let remarks = {
+            error: "An error occurred in [user-controller].getAllUsers.",
+            change: "No changes were made."
+        }
+        errorManager.processErrorMapping(req, res, next, 500, remarks);
     };
 };
 
