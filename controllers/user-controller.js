@@ -1,11 +1,15 @@
 const userService = require("../services/user-service");
+const errorManager = require("../utils/errors-manager");
 
-exports.createUsers = async (req, res) => {
+exports.createUsers = async (req, res, next) => {
     const users = req.body;
     if (!Array.isArray(users)) {
-        return res.status(400).json({
-            message: "Expected an array of users."
-        });
+        let remarks = {
+            error: "Expected an array of users.",
+            change: "No changes were made."
+        }
+        errorManager.processErrorMapping(req, res, next, 400, remarks);
+        return;
     };
 
     try {
@@ -15,10 +19,12 @@ exports.createUsers = async (req, res) => {
             inserted: users.map(u => u.email)
         });
     } catch (err) {
-        res.status(500).json({
-            stackTrace: "user-controller :: createUsers",
-            error: err.toString()
-        });
+        console.debug(err.message);
+        let remarks = {
+            error: "An error occurred in [user-controller].createUsers.",
+            change: "No changes were made."
+        }
+        errorManager.processErrorMapping(req, res, next, 500, remarks);
     };
 };
 
