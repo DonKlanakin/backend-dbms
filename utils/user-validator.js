@@ -6,7 +6,7 @@ const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const nameRegex = /^[A-Za-zก-๙\s'-]{2,}$/u;
 
 const validateUserFields = async (user, { checkEmailUnique = false, excludeId = null } = {}) => {
-    const { name, email, age } = user;
+    const { id, name, email, age } = user;
     const parsedAge = parseInt(age);
 
     if (!name || !email || age === undefined) {throw new Error("Missing required user fields.");}
@@ -28,6 +28,7 @@ const validateUserFields = async (user, { checkEmailUnique = false, excludeId = 
     }
 
     return {
+        id,
         name,
         email,
         age: parsedAge
