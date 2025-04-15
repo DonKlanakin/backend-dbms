@@ -39,8 +39,7 @@ exports.getAllUsers = async (req, res, next) => {
             res.status(200).json(users);
         } else {
             let remarks = {
-                error: "No users found with the given filters.",
-                change: "No changes were made."
+                error: "No users found with the given filters."
             }
             errorManager.processErrorMapping(req, res, next, 404, remarks);
             return;
@@ -48,8 +47,7 @@ exports.getAllUsers = async (req, res, next) => {
     } catch (err) {
         console.debug(err.message);
         let remarks = {
-            error: "An error occurred in [user-controller].getAllUsers.",
-            change: "No changes were made."
+            error: "An error occurred in [user-controller].getAllUsers."
         }
         errorManager.processErrorMapping(req, res, next, 500, remarks);
     };
