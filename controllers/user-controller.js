@@ -75,18 +75,24 @@ exports.getUserById = async (req, res, next) => {
     };
 };
 
-exports.updateUserById = async (req, res) => {
+exports.updateUserById = async (req, res, next) => {
     const user = req.body;
     const userId = req.params.id;
     try {
         if (!user || typeof user !== 'object') {
-            return res.status(400).json({
-                message: "Expected a user object."
-            });
+            let remarks = {
+                error: "Expected a user object.",
+                change: "No changes were made."
+            }
+            errorManager.processErrorMapping(req, res, next, 400, remarks);
+            return;
         } else if (user.id != userId) {
-            return res.status(400).json({
-                message: "Params and Body ids mismatached."
-            });
+            let remarks = {
+                error: "Params and Body ids mismatached.",
+                change: "No changes were made."
+            }
+            errorManager.processErrorMapping(req, res, next, 400, remarks);
+            return;
         };
         const updatedUser = await userService.updateUserById(userId, user);
         res.status(200).json([{
@@ -94,11 +100,14 @@ exports.updateUserById = async (req, res) => {
             message: `[User ID:${userId}] has been updated.`,
             updated: updatedUser.rows[0]
         }]);
+        
     } catch (err) {
-        res.status(500).json({
-            stackTrace: "user-controller :: updateUserById",
-            error: err.toString()
-        });
+        console.debug(err.message);
+        let remarks = {
+            error: "An error occurred in [user-controller].updateUserById.",
+            change: "No changes were made."
+        }
+        errorManager.processErrorMapping(req, res, next, 500, remarks);
     };
 };
 
