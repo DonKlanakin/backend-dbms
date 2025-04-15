@@ -10,9 +10,9 @@ const validateUserFields = async (user, { checkEmailUnique = false, excludeId = 
     const parsedAge = parseInt(age);
 
     if (!name || !email || age === undefined) {throw new Error("Missing required user fields.");}
-    if (name.length < 2 || !nameRegex.test(name)) {throw new Error(`Invalid name format: "${name}"`);}
-    if (!emailRegex.test(email)) {throw new Error(`Invalid email format: "${email}"`);}
-    if (isNaN(parsedAge) || parsedAge <= 0) {throw new Error(`Invalid age: "${age}"`);}
+    if (name.length < 2 || !nameRegex.test(name)) {throw new Error(`400 Invalid name format: "${name}"`);}
+    if (!emailRegex.test(email)) {throw new Error(`400 Invalid email format: "${email}"`);}
+    if (isNaN(parsedAge) || parsedAge <= 0) {throw new Error(`400 Invalid age: "${age}"`);}
     if (checkEmailUnique) {
         const query = `
             SELECT id FROM users 
