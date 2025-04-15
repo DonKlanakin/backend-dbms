@@ -83,11 +83,11 @@ exports.getUserById = async (req, res) => {
 
     try {
         result = await pool.query(sqlInstructions, [req.params.id]);
+// [TEST DB CONNECTION ERROR]
+//        result = await pool.query(null, [req.params.id]); // send NULL
+// [TEST DB CONNECTION ERROR]
     } catch (err) {
-        result = {
-            stackTrace: "user-repository :: getUserById",
-            error: err.toString()
-        };
+        console.debug(err);
     };
 
     return result;
