@@ -1,5 +1,6 @@
 const { Pool } = require("pg");
 const ENV = require("../env/config");
+const retry = require("../db/connection");
 
 const pool = new Pool({
     host: ENV.PROD.HOST,
@@ -11,5 +12,8 @@ const pool = new Pool({
         rejectUnauthorized: ENV.PROD.SSL_REQUIRED
     }
 });
+
+const originalQuery = pool.query.bind(pool);
+pool.query = (...args) => retry(originalQuery, args);
 
 module.exports = pool;
