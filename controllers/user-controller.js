@@ -19,12 +19,12 @@ exports.createUsers = async (req, res, next) => {
             inserted: users.map(u => u.email)
         });
     } catch (err) {
-        console.debug(err.message);
+        let statusCode = Number(err.message.substring(0,3)) || 500;
         let remarks = {
             error: "An error occurred in [user-controller].createUsers.",
             change: "No changes were made."
         }
-        errorManager.processErrorMapping(req, res, next, 500, remarks);
+        errorManager.processErrorMapping(req, res, next, statusCode, remarks);
     };
 };
 
