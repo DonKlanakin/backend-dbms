@@ -7,9 +7,9 @@ const retry = async (queryFn, args = [], retryCount = 0) => {
   try {
     return await queryFn(...args);
   } catch (err) {
-      // [TEST RETRY] Inject connection failure
-      err.code = "08006";
-      // [TEST RETRY]
+// [TEST RETRY CONNECTION]
+//      err.code = "08006"; // Inject error code: Connection failure
+// [TEST RETRY CONNECTION]
       const connectionErrors = [
           "ECONNRESET", "ECONNREFUSED", "ETIMEDOUT",
           "57P01", // Admin Shutdown
@@ -18,14 +18,14 @@ const retry = async (queryFn, args = [], retryCount = 0) => {
       ];
       const errorCode = err.code || err.sqlState || '';
       const isConnectionIssue = connectionErrors.includes(errorCode);
-      
+
       if (isConnectionIssue && retryCount < MAX_RETRIES) {
           const delay = INITIAL_DELAY_MS * Math.pow(2, retryCount);
           console.warn(`[DB RETRY] Attempt ${retryCount + 1} after error: ${errorCode}. Retrying in ${delay}ms...`);
           await timer.processDelay(delay);
           return retry(queryFn, args, retryCount + 1);
       }
-
+      
       throw err;
     }
 };
