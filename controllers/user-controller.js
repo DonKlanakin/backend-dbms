@@ -53,19 +53,25 @@ exports.getAllUsers = async (req, res, next) => {
     };
 };
 
-exports.getUserById = async (req, res) => {
+exports.getUserById = async (req, res, next) => {
     try {
         const user = await userService.getUserById(req, res);
         if (user.rows.length > 0) {
             res.status(200).json(user.rows[0]);
         } else {
-            res.status(404).json({ error: "User not found."});
+            let remarks = {
+                error: "No users found with the given filters."
+            }
+            errorManager.processErrorMapping(req, res, next, 404, remarks);
+            return;
         };
+        
     } catch (err) {
-        res.status(500).json({
-            stackTrace: "user-controller :: getUserById",
-            error: err.toString()
-        });
+        console.debug(err.message);
+        let remarks = {
+            error: "An error occurred in [user-controller].getUserById."
+        }
+        errorManager.processErrorMapping(req, res, next, 500, remarks);
     };
 };
 
