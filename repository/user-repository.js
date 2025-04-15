@@ -11,7 +11,7 @@ exports.createUsers = async (users) => {
     `;
   
     const values = users.flatMap(({ id, name, email, age }) => [id, name, email, age]);
-    await pool.query(sqlInstructions, values);
+    return await pool.query(sqlInstructions, values);
 };
 
 exports.getAllUsers = async (filters = {}) => {
