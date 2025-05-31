@@ -1,0 +1,18 @@
+@import url('definitions.css');
+@import url('variables.css');
+
+a   {
+    display:inline-block;
+    text-decoration: none;
+}
+
+body {
+    margin: 0px;
+}
+
+body,td,th {
+    font-family: 'Noto Sans Thai', 'tahoma', 'sans-serif';
+    font-size: var(--px-12);
+    font-style: normal;
+    font-weight: 400;
+}
